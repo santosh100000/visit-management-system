@@ -28,10 +28,10 @@ public class VisitResource {
         this.visitService = visitService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<VisitDTO>> getAllVisits() {
-        return ResponseEntity.ok(visitService.findAll());
-    }
+//    @GetMapping
+//    public ResponseEntity<List<VisitDTO>> getAllVisits() {
+//        return ResponseEntity.ok(visitService.findAll());
+//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<VisitDTO> getVisit(@PathVariable(name = "id") final Long id) {

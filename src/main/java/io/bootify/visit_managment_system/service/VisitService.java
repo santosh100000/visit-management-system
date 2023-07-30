@@ -12,6 +12,8 @@ import io.bootify.visit_managment_system.util.NotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -30,9 +32,11 @@ public class VisitService {
         this.flatRepository = flatRepository;
     }
 
-    public List<VisitDTO> findAll() {
-        final List<Visit> visits = visitRepository.findAll(Sort.by("id"));
+    public List<VisitDTO> findAll(Pageable pageable) {
+//        final List<Visit> visits = visitRepository.findAll(Sort.by("id"));
+        final List<Visit> visits = visitRepository.findAll(pageable).toList();
         return visits.stream()
+
                 .map(visit -> mapToDTO(visit, new VisitDTO()))
                 .toList();
     }

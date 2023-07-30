@@ -4,13 +4,16 @@ package io.bootify.visit_managment_system.rest;
 import io.bootify.visit_managment_system.model.AddressDTO;
 import io.bootify.visit_managment_system.model.UserDTO;
 import io.bootify.visit_managment_system.model.UserStatus;
+import io.bootify.visit_managment_system.model.VisitDTO;
 import io.bootify.visit_managment_system.service.UserService;
+import io.bootify.visit_managment_system.service.VisitService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +29,9 @@ import java.util.List;
 public class AdminPanelController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private VisitService visitService;
 
     @PostMapping("/createUser")
     @ApiResponse(responseCode = "201")
@@ -97,6 +103,11 @@ public class AdminPanelController {
              return ResponseEntity.ok(response);
     }
     
-    
+    @GetMapping("/allVisits")
+    public ResponseEntity<List<VisitDTO>> getAllVisit(@RequestParam Integer pageSize, @RequestParam Integer pageNo){
+        Pageable pageable = Pageable.ofSize(pageSize).withPage(pageNo);
+      List<VisitDTO> visitDTOS = visitService.findAll(pageable);
+      return ResponseEntity.ok(visitDTOS);
+    }
 
 }

@@ -50,7 +50,7 @@ public class Visit {
     @JoinColumn(name = "visitor_id")
     private Visitor visitor;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "flat_id")
     private Flat flat;
 
