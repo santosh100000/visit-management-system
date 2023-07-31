@@ -2,8 +2,13 @@ package io.bootify.visit_managment_system.model;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
-
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class AddressDTO {
 
     private Long id;

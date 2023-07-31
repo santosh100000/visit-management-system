@@ -12,11 +12,17 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import java.time.OffsetDateTime;
 import java.util.Set;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class Visitor {

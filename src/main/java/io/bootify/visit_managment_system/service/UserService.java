@@ -30,6 +30,8 @@ public class UserService {
         this.addressRepository = addressRepository;
     }
 
+
+
     public List<UserDTO> findAll() {
         final List<User> users = userRepository.findAll(Sort.by("id"));
         return users.stream()
@@ -45,9 +47,11 @@ public class UserService {
 
     @Transactional
     public Long create(final UserDTO userDTO) {
-        final User user = new User();
+         User user = new User();
         mapToEntity(userDTO, user);
-        return userRepository.save(user).getId();
+        user = userRepository.save(user);
+       Long ids = user.getId();
+        return ids;
     }
 
     public void markInactive(Long id){
@@ -74,7 +78,7 @@ public class UserService {
     }
 
     private UserDTO mapToDTO(final User user, final UserDTO userDTO) {
-        userDTO.setId(user.getId());
+
         userDTO.setName(user.getName());
         userDTO.setEmail(user.getEmail());
         userDTO.setPhone(user.getPhone());
@@ -91,6 +95,7 @@ public class UserService {
     }
 
     private User mapToEntity(final UserDTO userDTO, final User user) {
+
         user.setName(userDTO.getName());
         user.setEmail(userDTO.getEmail());
         user.setPhone(userDTO.getPhone());
@@ -115,6 +120,12 @@ public class UserService {
         user.setAddress(address);
         return user;
     }
+
+    public User findById(Long id){
+        User user = userRepository.findById(id).get();
+        return user;
+    }
+
 
     public boolean emailExists(final String email) {
         return userRepository.existsByEmailIgnoreCase(email);
