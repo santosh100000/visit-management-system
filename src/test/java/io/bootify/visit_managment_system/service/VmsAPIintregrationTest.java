@@ -164,5 +164,13 @@ public class VmsAPIintregrationTest {
 
     }
 
+    @Test
+    public void findVisitorById(){
+        Visitor visitor = visitorRepository.findById(1l).get();
+
+        assertThat(visitor.getName()).isEqualTo("santosh");
+
+    }
+
 
 }
