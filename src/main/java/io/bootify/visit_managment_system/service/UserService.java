@@ -12,12 +12,15 @@ import io.bootify.visit_managment_system.repos.UserRepository;
 import io.bootify.visit_managment_system.util.NotFoundException;
 import java.util.List;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final FlatRepository flatRepository;
@@ -131,4 +134,14 @@ public class UserService {
         return userRepository.existsByEmailIgnoreCase(email);
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(username);
+        List<User> users = userRepository.findAll();
+        System.out.println("Users size"+users.size());
+        if(user == null){
+            throw new UsernameNotFoundException("User doesn't exist ");
+        }
+        return user;
+    }
 }
