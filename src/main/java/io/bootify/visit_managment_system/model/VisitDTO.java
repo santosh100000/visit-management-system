@@ -2,10 +2,12 @@ package io.bootify.visit_managment_system.model;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 
-public class VisitDTO {
+public class VisitDTO implements Serializable {
 
     private Long id;
 

@@ -1,10 +1,7 @@
 package io.bootify.visit_managment_system.rest;
 
 
-import io.bootify.visit_managment_system.model.AddressDTO;
-import io.bootify.visit_managment_system.model.UserDTO;
-import io.bootify.visit_managment_system.model.UserStatus;
-import io.bootify.visit_managment_system.model.VisitDTO;
+import io.bootify.visit_managment_system.model.*;
 import io.bootify.visit_managment_system.service.UserService;
 import io.bootify.visit_managment_system.service.VisitService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -14,6 +11,7 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +30,9 @@ public class AdminPanelController {
 
     @Autowired
     private VisitService visitService;
+
+    @Autowired
+    private RedisTemplate<String, VisitListRedisDTO> redisTemplate;
 
     @PostMapping("/createUser")
     @ApiResponse(responseCode = "201")
@@ -108,6 +109,21 @@ public class AdminPanelController {
         Pageable pageable = Pageable.ofSize(pageSize).withPage(pageNo);
       List<VisitDTO> visitDTOS = visitService.findAll(pageable);
       return ResponseEntity.ok(visitDTOS);
+    }
+
+    @GetMapping("/allExpireVisits")
+    public ResponseEntity<List<VisitDTO>> getAllExpireVisits(){
+        String key = "ExpiredVisits";
+        VisitListRedisDTO visitListRedisDTO = redisTemplate.opsForValue().get(key);
+        if(visitListRedisDTO == null){
+            List<VisitDTO> visitDTOS = visitService.findAllExpireVisits();
+            visitListRedisDTO = new VisitListRedisDTO();
+            visitListRedisDTO.setVisitDTOList(visitDTOS);
+            redisTemplate.opsForValue().set(key, visitListRedisDTO);
+
+        }
+
+        return ResponseEntity.ok(visitListRedisDTO.getVisitDTOList());
     }
 
 }

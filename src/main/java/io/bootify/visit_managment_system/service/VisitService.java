@@ -1,6 +1,7 @@
 package io.bootify.visit_managment_system.service;
 
 import io.bootify.visit_managment_system.domain.Flat;
+import io.bootify.visit_managment_system.domain.User;
 import io.bootify.visit_managment_system.domain.Visit;
 import io.bootify.visit_managment_system.domain.Visitor;
 import io.bootify.visit_managment_system.model.VisitDTO;
@@ -15,6 +16,8 @@ import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 
@@ -35,6 +38,15 @@ public class VisitService {
     public List<VisitDTO> findAll(Pageable pageable) {
 //        final List<Visit> visits = visitRepository.findAll(Sort.by("id"));
         final List<Visit> visits = visitRepository.findAll(pageable).toList();
+        return visits.stream()
+
+                .map(visit -> mapToDTO(visit, new VisitDTO()))
+                .toList();
+    }
+
+    public List<VisitDTO> findAllExpireVisits( ) {
+//        final List<Visit> visits = visitRepository.findAll(Sort.by("id"));
+        final List<Visit> visits = visitRepository.findByStatus(VisitStatus.EXPIRED);
         return visits.stream()
 
                 .map(visit -> mapToDTO(visit, new VisitDTO()))
@@ -86,6 +98,12 @@ public class VisitService {
 
     public void approveVisit(Long id){
         Visit visit = visitRepository.findById(id).orElseThrow(() ->new NotFoundException("Visit not found"));
+        Flat flat = visit.getFlat();
+        User user = flat.getUser();
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(userDetails.getUsername().equals(user.getUsername())){
+            throw new NotFoundException("No visit for this visitor");
+        }
         if(VisitStatus.WAITING.equals(visit.getStatus())){
             visit.setStatus(VisitStatus.APPROVED);
         }
@@ -97,6 +115,12 @@ public class VisitService {
 
     public void rejectVisit(Long id){
         Visit visit = visitRepository.findById(id).orElseThrow(() ->new NotFoundException("Visit not found"));
+        Flat flat = visit.getFlat();
+        User user = flat.getUser();
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(userDetails.getUsername().equals(user.getUsername())){
+            throw new NotFoundException("No visit for this visitor");
+        }
         if(VisitStatus.WAITING.equals(visit.getStatus())){
             visit.setStatus(VisitStatus.REJECTED);
         }
